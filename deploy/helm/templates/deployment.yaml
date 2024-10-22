@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.app.name }}  
+  namespace: {{ .Values.app.namespace }} 
+  labels:
+    app: {{ .Values.app.name }}
+    environment: {{ .Values.app.environment }}
+  annotations:  
+    {{- toYaml .Values.annotations | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.app.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.app.name }}
+        version: {{ .Values.image.tag | quote }}
+        environment: {{ .Values.app.environment }}
+    spec:
+      {{- if .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml .Values.imagePullSecrets | nindent 8 }}
+      {{- end }}
+      containers:
+      - name: {{ .Values.app.name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.ports.http }}
+        readinessProbe:
+          httpGet:
+            path: {{ .Values.probes.path | quote }}
+            port: {{ .Values.ports.http }}
+          initialDelaySeconds: {{ .Values.probes.initialDelaySeconds }}
+        livenessProbe:
+          httpGet:
+            path: {{ .Values.probes.path | quote }}
+            port: {{ .Values.ports.http }}
+          initialDelaySeconds: {{ .Values.probes.initialDelaySeconds }}
+        resources:
+          requests:
+            memory: {{ .Values.resources.requests.memory | quote }}
+            cpu: {{ .Values.resources.requests.cpu | quote }}
+          limits:
+            memory: {{ .Values.resources.limits.memory | quote }}
+            cpu: {{ .Values.resources.limits.cpu | quote }}

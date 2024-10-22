@@ -1,0 +1,16 @@
+apiVersion: v1
+data:
+  auth.sh: |
+    #!/bin/sh
+    ACCESS_TOKEN=$(wget --header 'Metadata-Flavor: Google' http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token -q -O - | grep -Eo '"access_token":.*?[^\\]",' | cut -d '"' -f 4)
+    echo "oauth2accesstoken:$ACCESS_TOKEN"
+kind: ConfigMap
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","data":{"auth.sh":"#!/bin/sh\nACCESS_TOKEN=$(wget --header 'Metadata-Flavor: Google' http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token -q -O - | grep -Eo '\"access_token\":.*?[^\\\\]\",' | cut -d '\"' -f 4)\necho \"oauth2accesstoken:$ACCESS_TOKEN\"\n"},"kind":"ConfigMap","metadata":{"annotations":{},"name":"auth-cm","namespace":"argocd"}}
+  creationTimestamp: "2024-09-21T00:19:44Z"
+  name: auth-cm
+  namespace: argocd
+  resourceVersion: "6392456"
+  uid: 9fd43ea3-b728-43c1-a978-045bf8b53470

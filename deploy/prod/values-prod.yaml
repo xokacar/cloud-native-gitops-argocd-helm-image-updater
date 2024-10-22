@@ -1,0 +1,45 @@
+replicaCount: 2  
+
+app:
+  name: nodejs-express-app
+  namespace: nodejs-prod
+  environment: prod
+
+image:
+  repository: europe-west1-docker.pkg.prod/cgahiu-q1/cgahiu-repo/nodejs-express-app
+  pullPolicy: Always
+  tag: ""  
+
+imagePullSecrets:
+  - name: gcr-json-key
+
+service:
+  type: LoadBalancer  
+  port: 8080
+  targetPort: 8080
+
+ports:
+  http: 8080
+
+probes:
+  initialDelaySeconds: 10
+  path: "/"
+
+resources:
+  requests:
+    memory: "64Mi"
+    cpu: "10m"
+  limits:
+    memory: "128Mi"
+    cpu: "100m"
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70  
+  
+  pubsub:
+    enabled: true
+    subscription: "projects/cgahiu-q1/subscriptions/nodejs-prod-nodejs-express-app-topic-sub" 
+    unacknowledgedMessageThreshold: 50 

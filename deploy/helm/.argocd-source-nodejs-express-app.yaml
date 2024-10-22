@@ -1,0 +1,11 @@
+helm:
+  parameters:
+  - name: image.name
+    value: europe-west1-docker.pkg.dev/cgahiu-q1/cgahiu-repo/nodejs-express-app
+    forcestring: true
+  - name: image.tag
+    value: 1.0.41
+    forcestring: true
+  - name: image.repository
+    value: europe-west1-docker.pkg.dev/cgahiu-q1/cgahiu-repo/nodejs-express-app
+    forcestring: true

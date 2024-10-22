@@ -1,0 +1,29 @@
+apiVersion: v1
+data:
+  git.commit-message-template: |
+    Auto-commit by Argocd Image Updater [{{ .AppName }}]
+
+    {{ range .AppChanges -}}
+    updates image {{ .Image }} tag '{{ .OldTag }}' to '{{ .NewTag }}'
+    {{ end -}}
+  log.level: debug
+  registries.conf: |
+    registries:
+      - name: GCP Artifact Registry
+        prefix: europe-west1-docker.pkg.dev
+        api_url: https://europe-west1-docker.pkg.dev
+        credentials: ext:/auth/auth.sh
+        credsexpire: 30m
+kind: ConfigMap
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","data":{"git.commit-message-template":"Auto-commit by Argocd Image Updater [{{ .AppName }}]\n\n{{ range .AppChanges -}}\nupdates image {{ .Image }} tag '{{ .OldTag }}' to '{{ .NewTag }}'\n{{ end -}}\n","log.level":"debug","registries.conf":"registries:\n  - name: GCP Artifact Registry\n    prefix: europe-west1-docker.pkg.dev\n    api_url: https://europe-west1-docker.pkg.dev\n    credentials: ext:/auth/auth.sh\n    credsexpire: 30m\n"},"kind":"ConfigMap","metadata":{"annotations":{},"labels":{"app.kubernetes.io/name":"argocd-image-updater-config","app.kubernetes.io/part-of":"argocd-image-updater"},"name":"argocd-image-updater-config","namespace":"argocd"}}
+  creationTimestamp: "2024-09-20T23:57:58Z"
+  labels:
+    app.kubernetes.io/name: argocd-image-updater-config
+    app.kubernetes.io/part-of: argocd-image-updater
+  name: argocd-image-updater-config
+  namespace: argocd
+  resourceVersion: "6399293"
+  uid: bc30649f-f1d5-4cc7-ac1f-0c9913b9cdfe
